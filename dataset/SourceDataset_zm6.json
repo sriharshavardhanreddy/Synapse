@@ -1,0 +1,24 @@
+{
+	"name": "SourceDataset_zm6",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "appdb_service",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"cw_table": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().cw_table",
+				"type": "Expression"
+			}
+		}
+	}
+}
