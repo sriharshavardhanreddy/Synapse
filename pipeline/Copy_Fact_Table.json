@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_h7j",
+				"name": "Copy_Fact_Table",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {

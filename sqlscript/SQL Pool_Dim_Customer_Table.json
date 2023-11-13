@@ -1,0 +1,17 @@
+{
+	"name": "SQL Pool_Dim_Customer_Table",
+	"properties": {
+		"content": {
+			"query": "-- Lab - Creating Replicate-distributed Tables\n\n-- Let's drop the existing table\n\nDROP TABLE [dbo].[DimCustomer]\n\nSELECT * FROM [dbo].[DimCustomer]\n\n-- Now we want to create a Replicate-distributed table\n\nCREATE TABLE [dbo].[DimCustomer](\n\t[CustomerID] [int] NOT NULL,\n    [CompanyName] varchar(200) NOT NULL,\n\t[SalesPerson] varchar(300) NOT NULL\t\t\n)\nWITH  \n(   \n    DISTRIBUTION = REPLICATE\n)",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "pooldb",
+				"poolName": "pooldb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
