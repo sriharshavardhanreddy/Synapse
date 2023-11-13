@@ -2035,6 +2035,46 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_CASE_Statement')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - CASE Statement\n-- Evaluates a list of conditions and returns one of multiple possible result expressions.\n\n\nSELECT distinct[Event category] FROM [dbo].[pool_logdata]\n\nSELECT \nEventTier = CASE [Event category]\nWHEN 'Administrative' THEN 'Tier 1'\nWHEN 'Resource Health' THEN 'Tier 2'\nWHEN 'Service Health' THEN 'Tier 3'\nWHEN 'Policy' THEN 'Tier 4'\nWHEN 'Recommendation' THEN 'Tier 5'\nEND,\nCOUNT([Operation name]) AS 'Count of operations'\nFROM [Pool_logdata]\nGROUP BY [Event category]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_Creating_Indexes')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Note on creating Indexes\nDROP TABLE pool_logdata\n\nCREATE TABLE [pool_logdata]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [datetime] NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n)\nWITH  \n(   \n    DISTRIBUTION = HASH ([Operation name]),\n    CLUSTERED INDEX ([Resource type])\n)\n\nSELECT * FROM [pool_logdata]\n\nCREATE INDEX EventCategoryIndex ON [pool_logdata] ([Event category])\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SQL Pool_Dim_Customer_Table')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -2122,6 +2162,26 @@
 				"description": "Creating fact table using hash distribution",
 				"content": {
 					"query": "-- Lab - Creating Hash-distributed Tables\n\n-- Let's drop the existing table\n\nDROP TABLE [dbo].[FactSales]\n\n-- Now we want to create a hash-distributed table and set the hash-based column as the Customer ID\n\nCREATE TABLE [dbo].[FactSales](\n\t[ProductID] [int] NOT NULL,\n\t[SalesOrderID] [int] NOT NULL,\n\t[CustomerID] [int] NOT NULL,\n\t[OrderQty] [smallint] NOT NULL,\n\t[UnitPrice] [money] NOT NULL,\n\t[OrderDate] [datetime] NULL,\n\t[TaxAmt] [money] NULL\n)\nWITH  \n(   \n    DISTRIBUTION = HASH (CustomerID)\n)\n\n-- To see the distribution on the table\nDBCC PDW_SHOWSPACEUSED('[dbo].[FactSales]')\n\n-- If you execute the below query\nSELECT [CustomerID], COUNT([CustomerID]) as COUNT FROM [dbo].[FactSales]\nGROUP BY [CustomerID]\nORDER BY [CustomerID]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_Partitioned_Tables')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - Partitioned Tables\n\nSelect * FROM [pool_logdata];\n\nTRUNCATE Table [pool_logdata];\n\nSELECT FORMAT(Time,'yyyy-MM-dd') AS dt,COUNT(*) AS 'Number of Operations' FROM [logdata]\nGROUP BY FORMAT(Time,'yyyy-MM-dd')\n\n-- Let's drop the existing table if its exists\nDROP TABLE logdata\n\n\n-- Let's create a new table with partitions\n\nCREATE TABLE [logdata]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [datetime] NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n)\nWITH  \n(   \n    DISTRIBUTION = HASH ([Operation name]),\n    PARTITION ( [Time] RANGE RIGHT FOR VALUES\n            ('2023-01-01','2023-02-01','2023-03-01','2023-04-01'))\n)\n\n-- You will see 5 partitions , one is for those values prior to 2023-01-01\n\n",
 					"metadata": {
 						"language": "sql"
 					},
@@ -2290,6 +2350,26 @@
 						"poolName": "Built-in"
 					},
 					"resultLimit": -1
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Serverless_SQL_JSON_Script')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT TOP 100\n    jsonContent\n/* --> place the keys that you see in JSON documents in the WITH clause:\n       , JSON_VALUE (jsonContent, '$.key1') AS header1\n       , JSON_VALUE (jsonContent, '$.key2') AS header2\n*/\nFROM\n    OPENROWSET(\n        BULK 'https://datalake2029.dfs.core.windows.net/json/Log.json',\n        FORMAT = 'CSV',\n        FIELDQUOTE = '0x0b',\n        FIELDTERMINATOR ='0x0b',\n        ROWTERMINATOR = '0x0a'\n    )\n    WITH (\n        jsonContent varchar(MAX)\n    ) AS [result]\n\nSELECT    \n   JSON_VALUE(jsonContent,'$.Correlationid') As Correlationid,\n   JSON_VALUE(jsonContent,'$.Operationname') AS Operationname,\n   JSON_VALUE(jsonContent,'$.Status') AS Status,\n   JSON_VALUE(jsonContent,'$.Eventcategory') AS Eventcategory,\n   JSON_VALUE(jsonContent,'$.Level') AS Level,\n   CAST(JSON_VALUE(jsonContent,'$.Time') AS datetimeoffset) AS Time,\n   JSON_VALUE(jsonContent,'$.Subscription') AS Subscription,\n   JSON_VALUE(jsonContent,'$.Eventinitiatedby') AS Eventinitiatedby,\n   JSON_VALUE(jsonContent,'$.Resourcetype') AS Resourcetype,\n   JSON_VALUE(jsonContent,'$.Resourcegroup') AS Resourcegroup,\n   JSON_VALUE(jsonContent,'$.Resource') AS Resource\nFROM\n    OPENROWSET(\n        BULK 'https://datalake2029.dfs.core.windows.net/json/Log.json',\n        FORMAT = 'CSV',\n        FIELDQUOTE = '0x0b',\n        FIELDTERMINATOR ='0x0b',\n        ROWTERMINATOR = '0x0a'\n    )\n    WITH (\n        jsonContent varchar(MAX)\n    ) AS [rows]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
 				},
 				"type": "SqlQuery"
 			},
