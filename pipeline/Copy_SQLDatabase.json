@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_cf9",
+				"name": "Copy_SQLDatabase",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
