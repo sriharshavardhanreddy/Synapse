@@ -5,6 +5,9 @@
 		"workspaceName": {
 			"value": "dataworkspace2029"
 		},
+		"appdb_service_connectionString": {
+			"value": ""
+		},
 		"datalake2029_accountKey": {
 			"value": ""
 		},
