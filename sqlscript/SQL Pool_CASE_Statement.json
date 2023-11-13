@@ -2,7 +2,7 @@
 	"name": "SQL Pool_CASE_Statement",
 	"properties": {
 		"content": {
-			"query": "-- Lab - CASE Statement\n-- Evaluates a list of conditions and returns one of multiple possible result expressions.\n\n\nSELECT distinct[Event category] FROM [dbo].[pool_logdata]\n\nSELECT \nEventTier = CASE [Event category]\nWHEN 'Administrative' THEN 'Tier 1'\nWHEN 'Resource Health' THEN 'Tier 2'\nWHEN 'Service Health' THEN 'Tier 3'\nWHEN 'Policy' THEN 'Tier 4'\nWHEN 'Recommendation' THEN 'Tier 5'\nEND,\nCOUNT([Operation name]) AS 'Count of operations'\nFROM [pool_logdata]\nGROUP BY [Event category]",
+			"query": "-- Lab - CASE Statement\n-- Evaluates a list of conditions and returns one of multiple possible result expressions.\n\n\nSELECT distinct[Event category] FROM [dbo].[pool_logdata]\n\nSELECT \nEventTier = CASE [Event category]\nWHEN 'Administrative' THEN 'Tier 1'\nWHEN 'Resource Health' THEN 'Tier 2'\nWHEN 'Service Health' THEN 'Tier 3'\nWHEN 'Policy' THEN 'Tier 4'\nWHEN 'Recommendation' THEN 'Tier 5'\nEND,\nCOUNT([Operation name]) AS 'Count of operations'\nFROM [Pool_logdata]\nGROUP BY [Event category]",
 			"metadata": {
 				"language": "sql"
 			},
