@@ -1,0 +1,30 @@
+{
+	"name": "DestinationDataset_bi2",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyName",
+				"type": "varchar"
+			},
+			{
+				"name": "SalesPerson",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimCustomer"
+		},
+		"sqlPool": {
+			"referenceName": "pooldb",
+			"type": "SqlPoolReference"
+		}
+	}
+}
