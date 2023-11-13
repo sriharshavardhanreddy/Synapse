@@ -1,0 +1,18 @@
+{
+	"name": "SQL Pool_Fact_Table",
+	"properties": {
+		"description": "Creating fact table using hash distribution",
+		"content": {
+			"query": "-- Lab - Creating Hash-distributed Tables\n\n-- Let's drop the existing table\n\nDROP TABLE [dbo].[FactSales]\n\n-- Now we want to create a hash-distributed table and set the hash-based column as the Customer ID\n\nCREATE TABLE [dbo].[FactSales](\n\t[ProductID] [int] NOT NULL,\n\t[SalesOrderID] [int] NOT NULL,\n\t[CustomerID] [int] NOT NULL,\n\t[OrderQty] [smallint] NOT NULL,\n\t[UnitPrice] [money] NOT NULL,\n\t[OrderDate] [datetime] NULL,\n\t[TaxAmt] [money] NULL\n)\nWITH  \n(   \n    DISTRIBUTION = HASH (CustomerID)\n)\n\n-- To see the distribution on the table\nDBCC PDW_SHOWSPACEUSED('[dbo].[FactSales]')\n\n-- If you execute the below query\nSELECT [CustomerID], COUNT([CustomerID]) as COUNT FROM [dbo].[FactSales]\nGROUP BY [CustomerID]\nORDER BY [CustomerID]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "pooldb",
+				"poolName": "pooldb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
