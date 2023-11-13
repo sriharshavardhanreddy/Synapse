@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_bi2",
+				"name": "Copy_Dim_Customer",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
