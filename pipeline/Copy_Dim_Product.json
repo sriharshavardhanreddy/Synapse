@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_lu6",
+				"name": "Copy_Dim_Product",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
