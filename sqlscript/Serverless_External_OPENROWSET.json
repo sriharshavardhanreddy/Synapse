@@ -1,0 +1,17 @@
+{
+	"name": "Serverless_External_OPENROWSET",
+	"properties": {
+		"content": {
+			"query": "-- Lab - OPENROWSET\n\nSELECT *\nFROM OPENROWSET(BULK 'https://datalake2029.dfs.core.windows.net/parquet/*.parquet',\n                FORMAT = 'PARQUET') AS [logdata_temp]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
