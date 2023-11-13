@@ -30,6 +30,370 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/pooldb')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Copy_StorageAccount')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_StorageAccount",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "csv//Log.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.pool_logdata"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"writeBehavior": "Insert"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Correlation id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Correlation id",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Operation name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Operation name",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Event category",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Event category",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Level",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Level",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Time",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Time",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										}
+									},
+									{
+										"source": {
+											"name": "Subscription",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Subscription",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Event initiated by",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Event initiated by",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Resource type",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resource type",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Resource group",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resource group",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Resource",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resource",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_kbb",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_kbb",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_kbb')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_kbb')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_kbb')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "Correlation id",
+						"type": "varchar"
+					},
+					{
+						"name": "Operation name",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Event category",
+						"type": "varchar"
+					},
+					{
+						"name": "Level",
+						"type": "varchar"
+					},
+					{
+						"name": "Time",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Subscription",
+						"type": "varchar"
+					},
+					{
+						"name": "Event initiated by",
+						"type": "varchar"
+					},
+					{
+						"name": "Resource type",
+						"type": "varchar"
+					},
+					{
+						"name": "Resource group",
+						"type": "varchar"
+					},
+					{
+						"name": "Resource",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "pool_logdata"
+				},
+				"sqlPool": {
+					"referenceName": "pooldb",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/pooldb')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_kbb')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake2029",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Log.csv",
+						"fileSystem": "csv"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Correlation id",
+						"type": "String"
+					},
+					{
+						"name": "Operation name",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "Event category",
+						"type": "String"
+					},
+					{
+						"name": "Level",
+						"type": "String"
+					},
+					{
+						"name": "Time",
+						"type": "String"
+					},
+					{
+						"name": "Subscription",
+						"type": "String"
+					},
+					{
+						"name": "Event initiated by",
+						"type": "String"
+					},
+					{
+						"name": "Resource type",
+						"type": "String"
+					},
+					{
+						"name": "Resource group",
+						"type": "String"
+					},
+					{
+						"name": "Resource",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/datalake2029')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/datalake2029')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -125,6 +489,126 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_External_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - SQL Pool - External Tables - CSV\n\nCREATE DATABASE SCOPED CREDENTIAL AzureStorageCredential\nWITH\n  IDENTITY = 'datalake2029',\n  SECRET = '6vIsy34m+LZLOIAf5V6yOy5re3+Z25rpRtaI/JDH+8wVJ3BOrv7XhRJ3clz52FlcBgbHJK+INjxU+AStibg3Kw==';\n\n\nCREATE EXTERNAL DATA SOURCE log_data\nWITH (    LOCATION   = 'abfss://csv@datalake2029.dfs.core.windows.net',\n          CREDENTIAL = AzureStorageCredential,\n          TYPE = HADOOP\n)\n\n\nCREATE EXTERNAL FILE FORMAT TextFileFormat WITH (  \n      FORMAT_TYPE = DELIMITEDTEXT,  \n    FORMAT_OPTIONS (  \n        FIELD_TERMINATOR = ',',\n        FIRST_ROW = 2))\n\n\n\nCREATE EXTERNAL TABLE [logdata]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [datetime] NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n)\nWITH (\n LOCATION = '/Log.csv',\n    DATA_SOURCE = log_data,  \n    FILE_FORMAT = TextFileFormat\n)\n\n\nSELECT * FROM [logdata]\n\n-- Error\n-- HdfsBridge::recordReaderFillBuffer - Unexpected error encountered filling record reader buffer: HadoopSqlException: Error converting data type VARCHAR to DATETIME\n\nDROP EXTERNAL TABLE [logdata]\n\nCREATE EXTERNAL TABLE [logdata]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n)\nWITH (\n LOCATION = '/Log.csv',\n    DATA_SOURCE = log_data,  \n    FILE_FORMAT = TextFileFormat\n)\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_External_Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - SQL Pool - External Tables - Parquet\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'P@ssw0rd@123';\n\n-- Here we are using the Storage account key for authorization\n\nCREATE DATABASE SCOPED CREDENTIAL SasToken\nWITH IDENTITY='SHARED ACCESS SIGNATURE'\n, SECRET = 'sv=2022-11-02&ss=b&srt=sco&sp=rwdlacyx&se=2023-12-13T14:19:01Z&st=2023-11-13T06:19:01Z&spr=https&sig=wMHKoL0egX3wqrgBapP2tOIJjuJXfan9DcWNtmMTKvI%3D';\n\n-- When it comes to Dedicated SQL pool\n-- https://learn.microsoft.com/en-us/azure/synapse-analytics/sql/create-use-external-tables\n-- For CSV files, we need to use the Hadoop driver in the TYPE when mentioning the data source\n-- But if we do this, we get the error Hadoop \n-- The native driver is supported for Partquet based files\n\nCREATE EXTERNAL DATA SOURCE log_data_parquet\nWITH (    LOCATION   = 'https://datalake2029.dfs.core.windows.net/parquet',\n          CREDENTIAL = SasToken\n)\n\nCREATE EXTERNAL FILE FORMAT parquetfile  \nWITH (  \n    FORMAT_TYPE = PARQUET,  \n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'  \n);\n\n\nCREATE EXTERNAL TABLE [logdata_parquet]\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL)\nWITH (\n LOCATION = '/log.parquet',\n    DATA_SOURCE = log_data_parquet,  \n    FILE_FORMAT = parquetfile\n)\n\n\nSELECT * FROM logdata_parquet\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_Table_COPY_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - Loading data - COPY command - CSV\nCREATE TABLE [pool_logdata]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [datetime] NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n)\n\nSELECT * FROM [pool_logdata]\n\nCOPY INTO [pool_logdata] FROM 'https://datalake2029.blob.core.windows.net/csv/Log.csv'\nWITH(\n    FILE_TYPE='CSV',\n    CREDENTIAL=(IDENTITY='Storage Account Key',SECRET='6vIsy34m+LZLOIAf5V6yOy5re3+Z25rpRtaI/JDH+8wVJ3BOrv7XhRJ3clz52FlcBgbHJK+INjxU+AStibg3Kw=='),\n    FIRSTROW=2)\n\nSELECT * FROM [pool_logdata]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_Table_COPY_Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - Loading data - COPY command - Parquet\n\nCREATE TABLE [pool_logdata_parquet]\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL)\n    \nCOPY INTO [pool_logdata_parquet] FROM 'https://datalake2029.blob.core.windows.net/parquet/log.parquet'\nWITH(\n    FILE_TYPE='PARQUET',\n    CREDENTIAL=(IDENTITY='Storage Account Key',SECRET='6vIsy34m+LZLOIAf5V6yOy5re3+Z25rpRtaI/JDH+8wVJ3BOrv7XhRJ3clz52FlcBgbHJK+INjxU+AStibg3Kw==') )\n\nSELECT * FROM [pool_logdata_parquet]\n\nSELECT * FROM [logdata_parquet]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool_Table_PolyBase_Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - Loading data using Polybase\n\nSELECT * FROM sys.database_scoped_credentials\n\nSELECT * FROM sys.external_data_sources \n\nSELECT * FROM sys.external_file_formats\n\nSELECT * FROM [logdata_parquet] \n\nSELECT * FROM [pool_logdata_parquet]\n\nDROP TABLE [pool_logdata_parquet]\n\nCREATE TABLE [pool_logdata_parquet]\nWITH\n(\nDISTRIBUTION = ROUND_ROBIN\n)\nAS\nSELECT  *\nFROM  [logdata_parquet];",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL Pool__Random_Script')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DELETE FROM [pool_logdata]\n\nSELECT * FROM [pool_logdata]\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "pooldb",
+						"poolName": "pooldb"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Serverless_External_CSV')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -143,6 +627,78 @@
 				"type": "SqlQuery"
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Serverless_External_Multiple_Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "\nDROP EXTERNAL TABLE [logdata_parquet]\n\nCREATE EXTERNAL TABLE [logdata_parquet]\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL)\nWITH (\n LOCATION = '/',\n    DATA_SOURCE = log_data_parquet,  \n    FILE_FORMAT = parquetfile\n)\n\nSELECT * FROM [logdata_parquet]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "appdb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Serverless_External_OPENROWSET')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - OPENROWSET\n\nSELECT *\nFROM OPENROWSET(BULK 'https://datalake2029.dfs.core.windows.net/parquet/*.parquet',\n                FORMAT = 'PARQUET') AS [logdata_temp]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Serverless_External_Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Lab - External Tables - Parquet file\n\n-- If we need to drop the existing artefacts\n\nDROP EXTERNAL TABLE [logdata]\n\nDROP EXTERNAL DATA SOURCE log_data\n\nDROP DATABASE SCOPED CREDENTIAL SasToken\n\n-- Then we can recreate the required credentials\n\nCREATE DATABASE SCOPED CREDENTIAL SasToken\nWITH IDENTITY='SHARED ACCESS SIGNATURE'\n, SECRET = 'sv=2022-11-02&ss=b&srt=sco&sp=rwdlacyx&se=2023-12-13T14:19:01Z&st=2023-11-13T06:19:01Z&spr=https&sig=wMHKoL0egX3wqrgBapP2tOIJjuJXfan9DcWNtmMTKvI%3D';\n\nCREATE EXTERNAL DATA SOURCE log_data_parquet\nWITH (    LOCATION   = 'https://datalake2029.dfs.core.windows.net/parquet',\n          CREDENTIAL = SasToken\n)\n\nCREATE EXTERNAL FILE FORMAT parquetfile  \nWITH (  \n    FORMAT_TYPE = PARQUET,  \n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'  \n);\n\n-- Here we define the external table\n\n\nCREATE EXTERNAL TABLE [logdata_parquet]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [datetime] NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL)\nWITH (\n LOCATION = '/log.parquet',\n    DATA_SOURCE = log_data_parquet,  \n    FILE_FORMAT = parquetfile\n)\n\nSELECT * FROM [logdata_parquet]\n\n-- Then we will get the error\n\n-- Column 'Time' of type 'DATETIME' is not compatible with external data type 'Parquet physical type: BYTE_ARRAY, logical type: UTF8', please try with 'VARCHAR(8000)'. File/External table name: 'logdata_parquet'.\n\n-- This is because when I converted the CSV file where everything is a string\n-- Its also put it as a string in parquet based file.\nDROP EXTERNAL TABLE [logdata_parquet]\n\nCREATE EXTERNAL TABLE [logdata_parquet]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL)\nWITH (\n LOCATION = '/log.parquet',\n    DATA_SOURCE = log_data_parquet,  \n    FILE_FORMAT = parquetfile\n)\n\n\n-- Then we cannot see the data in the columns which have a space in the column name\n\nDROP EXTERNAL TABLE [logdata_parquet]\n\nCREATE EXTERNAL TABLE [logdata_parquet]\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL)\nWITH (\n LOCATION = '/log.parquet',\n    DATA_SOURCE = log_data_parquet,  \n    FILE_FORMAT = parquetfile\n)",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "appdb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": -1
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/pooldb')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "northeurope"
 		}
 	]
 }
