@@ -1,0 +1,17 @@
+{
+	"name": "SQL Pool__Random_Script",
+	"properties": {
+		"content": {
+			"query": "DELETE FROM [pool_logdata]\n\nSELECT * FROM [pool_logdata]\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "pooldb",
+				"poolName": "pooldb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
