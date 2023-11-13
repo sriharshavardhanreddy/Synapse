@@ -1,0 +1,17 @@
+{
+	"name": "SQL Pool_Dim_Product_Table",
+	"properties": {
+		"content": {
+			"query": "-- Lab - Surrogate Keys\n\nDROP TABLE [dbo].[DimProduct]\n\nCREATE TABLE [dbo].[DimProduct](\n\t[ProductSK] [int] IDENTITY(1,1) NOT NULL,\n\t[ProductID] [int] NOT NULL,\n\t[ProductModelID] [int] NOT NULL,\n\t[ProductcategoryID] [int] NOT NULL,\n\t[ProductName] varchar(50) NOT NULL,\t\n\t[ProductModelName] varchar(50) NULL,\n\t[ProductCategoryName] varchar(50) NULL\n)\n\nSELECT * FROM [dbo].[DimProduct]\n\nSELECT * FROM [dbo].[DimProduct]\nORDER BY [ProductSK]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "pooldb",
+				"poolName": "pooldb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
