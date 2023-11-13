@@ -1,0 +1,17 @@
+{
+	"name": "SQL Pool_Table_COPY_Parquet",
+	"properties": {
+		"content": {
+			"query": "-- Lab - Loading data - COPY command - Parquet\n\nCREATE TABLE [pool_logdata_parquet]\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL)\n    \nCOPY INTO [pool_logdata_parquet] FROM 'https://datalake2029.blob.core.windows.net/parquet/log.parquet'\nWITH(\n    FILE_TYPE='PARQUET',\n    CREDENTIAL=(IDENTITY='Storage Account Key',SECRET='6vIsy34m+LZLOIAf5V6yOy5re3+Z25rpRtaI/JDH+8wVJ3BOrv7XhRJ3clz52FlcBgbHJK+INjxU+AStibg3Kw==') )\n\nSELECT * FROM [pool_logdata_parquet]\n\nSELECT * FROM [logdata_parquet]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "pooldb",
+				"poolName": "pooldb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
