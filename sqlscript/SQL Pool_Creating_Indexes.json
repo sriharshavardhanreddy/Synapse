@@ -1,0 +1,17 @@
+{
+	"name": "SQL Pool_Creating_Indexes",
+	"properties": {
+		"content": {
+			"query": "-- Note on creating Indexes\nDROP TABLE pool_logdata\n\nCREATE TABLE [pool_logdata]\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [datetime] NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n)\nWITH  \n(   \n    DISTRIBUTION = HASH ([Operation name]),\n    CLUSTERED INDEX ([Resource type])\n)\n\nSELECT * FROM [pool_logdata]\n\nCREATE INDEX EventCategoryIndex ON [pool_logdata] ([Event category])\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "pooldb",
+				"poolName": "pooldb"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
