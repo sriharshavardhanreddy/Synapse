@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_kbb",
+				"name": "Copy_StorageAccount",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
