@@ -14,7 +14,7 @@
 					},
 					"activities": [
 						{
-							"name": "Copy_zm6",
+							"name": "Copy_Fact_Dimension",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
